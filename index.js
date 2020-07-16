@@ -1,1 +1,5 @@
-console.log("This is a CSV Parser")
+const parser =  require('./parser/parser');
+
+let json = parser('./sample.csv')
+
+console.log(json);
