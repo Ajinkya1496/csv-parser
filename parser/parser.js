@@ -1,37 +1,52 @@
 const fs = require('fs');
+const { Readable } = require('stream');
+
+let options = {
+    skipError: false,
+    ignoreHeader: false,
+}
 
 function parser(filepath) {
-    let options = {
-        skipError: false,
-        ignoreHeader: false,
-    }
     if(typeof filepath !== 'string') {
         throw new TypeError(`Expected string got ${typeof filepath}`);
     }
-    // if file not found throw error
+
     let fileData;
     try {
         fileData = fs.readFileSync(filepath, {encoding: 'utf-8'});
     } catch(error) {
         throw new Error(`File not found ${filepath}`);
     }
+    // let readStream = fs.createReadStream(filepath, {encoding: 'utf-8'});
+    // readStream.on('data', function(chunk) {
+    //     fileData += chunk;
+    // });
 
+    // readStream.on('end', function() {
+    //     console.log(fileData);
+    // })
     let allLines = fileData.split(/\r\n|\n/);
 
     let headersFields = allLines[0].split(',');
-    let jsonData = [];
-    
-    for (let i=1; i<allLines.length; i++) {
+    let parsedData = [];
+
+    let i = options.ignoreHeader === true? 0 : 1;
+
+    for (; i<allLines.length; i++) {
         const data = allLines[i].split(',');
-        if (data.length === headersFields.length) {
-            let obj = {};
-            for (var j=0; j<headersFields.length; j++) {
-                obj[headersFields[j]] = data[j];
+        if(options.ignoreHeader === true) {
+            parsedData.push(data);
+        } else {
+            if (data.length === headersFields.length) {
+                let obj = {};
+                for (var j=0; j<headersFields.length; j++) {
+                    obj[headersFields[j]] = data[j];
+                }
+                parsedData.push(obj);
             }
-            jsonData.push(obj);
         }
     }
-    return jsonData;
+    return parsedData;
 }
 
 module.exports = parser;
