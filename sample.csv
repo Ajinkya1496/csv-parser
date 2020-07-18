@@ -1,5 +1,5 @@
-id, name, marks
-1, Ajinkya,20
-2,Hitman,30
-3, Arfat,40
-4,Aditya,50
+id; name; marks
+1;Ajinkya;20
+2;Hitman;30
+3;Arfat;40
+4;Aditya;50
