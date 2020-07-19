@@ -1,16 +1,12 @@
 const fs = require('fs');
 
-function parser(filepath, { ignoreHeader = false }) {
+function parser(filepath, { ignoreHeader = false }, callback) {
     if (typeof filepath !== 'string') {
         throw new TypeError(`Expected string got ${typeof filepath}`);
     }
     return new Promise((resolve) => {
         let fileData = '';
-        // try {
-        //     fileData = fs.readFileSync(filepath, {encoding: 'utf-8'});
-        // } catch(error) {
-        //     throw new Error(`File not found ${filepath}`);
-        // }
+        
         let readStream = fs.createReadStream(filepath, { encoding: 'utf-8' });
         readStream.on('data', chunk => {
             fileData += chunk;
@@ -22,7 +18,7 @@ function parser(filepath, { ignoreHeader = false }) {
 
             let headersFields = allLines[0].split(delimiter);
             let parsedData = [];
-
+            
             let i = ignoreHeader === true ? 0 : 1;
 
             for (; i < allLines.length; i++) {
@@ -39,7 +35,12 @@ function parser(filepath, { ignoreHeader = false }) {
                     }
                 }
             }
-            resolve(parsedData);
+            if(callback && typeof callback === "function") {
+                callback(parsedData);
+            }
+            else {
+                resolve(parsedData);
+            }
         })
     })
 }
