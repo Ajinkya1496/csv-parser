@@ -1,5 +1,7 @@
 const parser =  require('./parser/parser');
 
-let json = parser('./sample.csv');
+let json = parser('./sample.csv', {ignoreHeader: true});
 
-console.log(json);
+json.then(data => {
+    console.log("Result\n", data);
+})
