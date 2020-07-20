@@ -10,7 +10,10 @@ const parser = require('parser');
 
 let jsonData = parser('sample.csv');
 
-console.log(jsonData);
+jsonData.then(data => {
+    console.log(data)
+})
+
 
 ```
 
